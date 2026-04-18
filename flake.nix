@@ -47,6 +47,7 @@
           default = pkgs.mkShell {
             packages = [
               self.packages.${pkgs.stdenv.hostPlatform.system}.default
+              pkgs.shfmt
               nix-lefthook-shellcheck.packages.${pkgs.stdenv.hostPlatform.system}.default
               batsWithLibs
               pkgs.yamllint

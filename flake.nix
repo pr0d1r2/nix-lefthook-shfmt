@@ -15,10 +15,6 @@
       url = "github:pr0d1r2/nix-lefthook-missing-final-newline";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-lefthook-shellcheck = {
-      url = "github:pr0d1r2/nix-lefthook-shellcheck";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nix-lefthook-trailing-whitespace = {
       url = "github:pr0d1r2/nix-lefthook-trailing-whitespace";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -32,7 +28,6 @@
       nix-lefthook-git-conflict-markers,
       nix-lefthook-git-no-local-paths,
       nix-lefthook-missing-final-newline,
-      nix-lefthook-shellcheck,
       nix-lefthook-trailing-whitespace,
     }:
     let
@@ -67,24 +62,24 @@
           default = pkgs.mkShell {
             packages = [
               self.packages.${pkgs.stdenv.hostPlatform.system}.default
-              pkgs.shfmt
               nix-lefthook-git-conflict-markers.packages.${pkgs.stdenv.hostPlatform.system}.default
               nix-lefthook-git-no-local-paths.packages.${pkgs.stdenv.hostPlatform.system}.default
               nix-lefthook-missing-final-newline.packages.${pkgs.stdenv.hostPlatform.system}.default
-              nix-lefthook-shellcheck.packages.${pkgs.stdenv.hostPlatform.system}.default
               nix-lefthook-trailing-whitespace.packages.${pkgs.stdenv.hostPlatform.system}.default
               batsWithLibs
               pkgs.coreutils
-              pkgs.nix
-              pkgs.parallel
+              pkgs.deadnix
               pkgs.editorconfig-checker
-              pkgs.typos
-              pkgs.yamllint
               pkgs.git
               pkgs.lefthook
+              pkgs.nix
               pkgs.nixfmt
+              pkgs.parallel
+              pkgs.shellcheck
+              pkgs.shfmt
               pkgs.statix
-              pkgs.deadnix
+              pkgs.typos
+              pkgs.yamllint
             ];
             shellHook = builtins.replaceStrings [ "@BATS_LIB_PATH@" ] [ "${batsWithLibs}" ] (
               builtins.readFile ./dev.sh

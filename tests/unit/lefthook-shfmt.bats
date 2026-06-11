@@ -73,3 +73,68 @@ SH
     run shfmt_cmd "$TMP/bad.sh"
     assert_failure
 }
+
+@test "honors .editorconfig indent_size=4" {
+    mkdir -p "$TMP/proj4"
+    cat > "$TMP/proj4/.editorconfig" <<'EC'
+root = true
+[*]
+indent_style = space
+indent_size = 4
+EC
+    cat > "$TMP/proj4/x.sh" <<'SH'
+#!/usr/bin/env bash
+if true; then
+    echo "four spaces"
+fi
+SH
+    run shfmt_cmd --check "$TMP/proj4/x.sh"
+    assert_success
+}
+
+@test "rejects 2-space under .editorconfig indent_size=4" {
+    mkdir -p "$TMP/proj4b"
+    cat > "$TMP/proj4b/.editorconfig" <<'EC'
+root = true
+[*]
+indent_style = space
+indent_size = 4
+EC
+    cat > "$TMP/proj4b/x.sh" <<'SH'
+#!/usr/bin/env bash
+if true; then
+  echo "two spaces"
+fi
+SH
+    run shfmt_cmd --check "$TMP/proj4b/x.sh"
+    assert_failure
+}
+
+@test "honors .editorconfig indent_size=2" {
+    mkdir -p "$TMP/proj2"
+    cat > "$TMP/proj2/.editorconfig" <<'EC'
+root = true
+[*]
+indent_style = space
+indent_size = 2
+EC
+    cat > "$TMP/proj2/x.sh" <<'SH'
+#!/usr/bin/env bash
+if true; then
+  echo "two spaces"
+fi
+SH
+    run shfmt_cmd --check "$TMP/proj2/x.sh"
+    assert_success
+}
+
+@test "falls back to 2-space when no .editorconfig governs" {
+    cat > "$TMP/loose.sh" <<'SH'
+#!/usr/bin/env bash
+if true; then
+  echo "two spaces"
+fi
+SH
+    run shfmt_cmd --check "$TMP/loose.sh"
+    assert_success
+}

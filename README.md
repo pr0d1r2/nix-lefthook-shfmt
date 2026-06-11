@@ -8,6 +8,30 @@ Lefthook-compatible [shfmt](https://github.com/mvdan/sh) wrapper, packaged as a 
 
 Filters `.sh` files from staged arguments and runs shfmt on them. Exits 0 when no matching files are found.
 
+## Formatting rules
+
+The wrapper honors your repo's `.editorconfig`. When an `.editorconfig`
+governs the staged files, shfmt reads its formatting options
+(`indent_size`, `switch_case_indent`, `binary_next_line`, ...) directly —
+the wrapper passes no formatting flags, so your project controls the
+style. Set the indent you want once:
+
+```ini
+# .editorconfig
+[*.sh]
+indent_style = space
+indent_size = 2
+switch_case_indent = true
+```
+
+When no `.editorconfig` is found, the wrapper falls back to `-i 2 -ci`
+(2-space indent, case bodies indented).
+
+> Earlier versions forced `-i 2 -ci` unconditionally, which silently
+> overrode a consumer's own `.editorconfig`. Repos that relied on the
+> 2-space default keep it via the fallback; repos with an `.editorconfig`
+> now get the indent they declared.
+
 ## Usage
 
 ### Option A: Lefthook remote (recommended)

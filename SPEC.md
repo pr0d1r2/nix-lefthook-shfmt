@@ -94,3 +94,5 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 5. **`lefthook-bats-unit` wrapper inconsistency.** All other lefthook wrappers in `flake.nix` use the `wrap` helper function, but `lefthook-bats-unit` is defined inline with a manual `writeShellApplication` call. This makes it harder to maintain consistently if the `wrap` pattern changes.
 
 6. **`ci` devShell sets `BATS_LIB_PATH` differently from `default`.** The `ci` shell sets it as a Nix env attribute (`BATS_LIB_PATH = "..."`), while `default` sets it via `dev.sh` export with placeholder substitution. If the placeholder mechanism changes, the two shells could diverge.
+
+7. **`file-size-check` fails on `.md` files exceeding default limit.** `config/lefthook/file_size_limits.yml` had no `md` extension entry, so markdown files fell under the 4096-byte default. `SPEC.md` (6818 bytes) exceeded this, causing CI failure. Fixed by adding `md: 8192` extension limit.

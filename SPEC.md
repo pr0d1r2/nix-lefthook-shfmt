@@ -73,13 +73,12 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 |---|---|---|
 | `.` | T1 | Add `watch_file` entries to `.envrc` for `flake.nix`, `flake.lock`, `dev.sh`, and `lefthook-shfmt.sh` per direnv skill requirement. |
 | `.` | T2 | Add markdownlint lefthook check (`.markdownlint.yml` config exists but no hook references it). |
-| `.` | T3 | Add TOML linter for `.rtk/filters.toml` — file type is tracked in git but has no assigned linter in lefthook. |
-| `.` | T4 | Standardize `actions/checkout` version — `update-pins.yml` uses `@v4` while `ci.yml` uses `@v6`. |
-| `.` | T5 | Add bats test for mixed `.sh` and non-`.sh` arguments passed together (currently only tested separately). |
-| `.` | T6 | Add bats test for `--format` on an already-formatted file (idempotency). |
-| `.` | T7 | Add bats test for `--check` and `--format` with multiple files in a single invocation. |
-| `.` | T8 | Refactor `lefthook-bats-unit` in `flake.nix` to use the `wrap` helper pattern (currently manually defined unlike other wrappers). |
-| `.` | T9 | Add `nix/direnv.sh` file referenced by direnv skill but not yet present — centralizes watch-file logic. |
+| `.` | T3 | Standardize `actions/checkout` version — `update-pins.yml` uses `@v4` while `ci.yml` uses `@v6`. |
+| `.` | T4 | Add bats test for mixed `.sh` and non-`.sh` arguments passed together (currently only tested separately). |
+| `.` | T5 | Add bats test for `--format` on an already-formatted file (idempotency). |
+| `.` | T6 | Add bats test for `--check` and `--format` with multiple files in a single invocation. |
+| `.` | T7 | Refactor `lefthook-bats-unit` in `flake.nix` to use the `wrap` helper pattern (currently manually defined unlike other wrappers). |
+| `.` | T8 | Add `nix/direnv.sh` file referenced by direnv skill but not yet present — centralizes watch-file logic. |
 
 ## §B — Bugs / Known Issues
 
@@ -87,12 +86,10 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 
 2. **`actions/checkout` version mismatch across workflows.** `ci.yml` uses `actions/checkout@v6` while `update-pins.yml` uses `actions/checkout@v4`. Both should use the same version to avoid inconsistent CI behavior.
 
-3. **`.markdownlint.yml` config is unused by lefthook.** The config file exists and markdown files are tracked (`README.md`, `PROMPT.md`, skill docs), but no markdownlint command is defined in `lefthook.yml`. This violates the linter skill rule that every tracked file type must have a lefthook linter.
+3. **`.markdownlint.yml` config is unused by lefthook.** The config file exists and markdown files are tracked (`README.md`, `SPEC.md`, skill docs), but no markdownlint command is defined in `lefthook.yml`. This violates the linter skill rule that every tracked file type must have a lefthook linter.
 
-4. **TOML file has no linter.** `.rtk/filters.toml` is tracked in git but TOML has no assigned linter in `lefthook.yml`, violating the linter-per-file-type invariant.
+4. **`lefthook-bats-unit` wrapper inconsistency.** All other lefthook wrappers in `flake.nix` use the `wrap` helper function, but `lefthook-bats-unit` is defined inline with a manual `writeShellApplication` call. This makes it harder to maintain consistently if the `wrap` pattern changes.
 
-5. **`lefthook-bats-unit` wrapper inconsistency.** All other lefthook wrappers in `flake.nix` use the `wrap` helper function, but `lefthook-bats-unit` is defined inline with a manual `writeShellApplication` call. This makes it harder to maintain consistently if the `wrap` pattern changes.
+5. **`ci` devShell sets `BATS_LIB_PATH` differently from `default`.** The `ci` shell sets it as a Nix env attribute (`BATS_LIB_PATH = "..."`), while `default` sets it via `dev.sh` export with placeholder substitution. If the placeholder mechanism changes, the two shells could diverge.
 
-6. **`ci` devShell sets `BATS_LIB_PATH` differently from `default`.** The `ci` shell sets it as a Nix env attribute (`BATS_LIB_PATH = "..."`), while `default` sets it via `dev.sh` export with placeholder substitution. If the placeholder mechanism changes, the two shells could diverge.
-
-7. **`file-size-check` fails on `.md` files exceeding default limit.** `config/lefthook/file_size_limits.yml` had no `md` extension entry, so markdown files fell under the 4096-byte default. `SPEC.md` (6818 bytes) exceeded this, causing CI failure. Fixed by adding `md: 8192` extension limit.
+6. **`file-size-check` fails on `.md` files exceeding default limit.** `config/lefthook/file_size_limits.yml` had no `md` extension entry, so markdown files fell under the 4096-byte default. `SPEC.md` (6818 bytes) exceeded this, causing CI failure. Fixed by adding `md: 8192` extension limit.

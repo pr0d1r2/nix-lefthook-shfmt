@@ -71,7 +71,7 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 
 | status | id | goal |
 |---|---|---|
-| `.` | T1 | Add `watch_file` entries to `.envrc` for `flake.nix`, `flake.lock`, `dev.sh`, and `lefthook-shfmt.sh` per direnv skill requirement. |
+| `x` | T1 | Add `watch_file` entries to `.envrc` for `flake.nix`, `flake.lock`, `dev.sh`, and `lefthook-shfmt.sh` per direnv skill requirement. |
 | `.` | T2 | Add markdownlint lefthook check (`.markdownlint.yml` config exists but no hook references it). |
 | `.` | T3 | Standardize `actions/checkout` version — `update-pins.yml` uses `@v4` while `ci.yml` uses `@v6`. |
 | `.` | T4 | Add bats test for mixed `.sh` and non-`.sh` arguments passed together (currently only tested separately). |

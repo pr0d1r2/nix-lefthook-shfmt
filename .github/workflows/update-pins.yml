@@ -1,0 +1,20 @@
+---
+name: Update Pins
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: DeterminateSystems/nix-installer-action@main
+      - run: nix flake update nixpkgs-lock
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "chore: update nixpkgs-lock pin"
+          title: "chore: update nixpkgs-lock pin"
+          branch: update-nixpkgs-lock

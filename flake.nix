@@ -198,6 +198,7 @@
             pkgs.coreutils
             pkgs.git
             pkgs.lefthook
+            pkgs.markdownlint-cli
             pkgs.nix
             pkgs.parallel
             pkgs.shfmt

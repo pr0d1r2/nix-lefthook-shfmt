@@ -25,12 +25,12 @@ A Nix flake that packages a lefthook-compatible [shfmt](https://github.com/mvdan
 
 ### CLI — `lefthook-shfmt`
 
-```
+```text
 lefthook-shfmt [--check | --format] file1.sh [file2.sh ...]
 ```
 
 | Argument | Description |
-|---|---|
+| --- | --- |
 | `--check` | Diff mode (exit non-zero on formatting violations). This is also the default when no flag is given. |
 | `--format` | Write mode (reformat files in place). |
 | `file ...` | Paths to check. Non-`.sh` and non-existent paths are silently skipped. |
@@ -40,7 +40,7 @@ Exit codes: `0` = success or nothing to check; non-zero = formatting violation (
 ### Nix Flake Outputs
 
 | Output | Description |
-|---|---|
+| --- | --- |
 | `packages.<system>.default` | `writeShellApplication` wrapping `lefthook-shfmt.sh` with `shfmt` in `runtimeInputs`. |
 | `devShells.<system>.default` | Full dev shell: linters, bats, lefthook, `dev.sh` shellHook. |
 | `devShells.<system>.ci` | CI-only shell: same packages, `BATS_LIB_PATH` env var, no shellHook. |
@@ -52,14 +52,14 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 ### Environment Variables
 
 | Variable | Default | Description |
-|---|---|---|
+| --- | --- | --- |
 | `LEFTHOOK_SHFMT_TIMEOUT` | `30` | Timeout in seconds for shfmt commands in lefthook hooks. |
 | `BATS_LIB_PATH` | Set by devShell | Path to bats helper libraries (bats-support, bats-assert, bats-file). |
 
 ### Config Files
 
 | File | Format | Purpose |
-|---|---|---|
+| --- | --- | --- |
 | `lefthook.yml` | YAML | Local lefthook hooks + remote check imports. |
 | `lefthook-remote.yml` | YAML | Exported lefthook config for consumers. |
 | `config/lefthook/file_size_limits.yml` | YAML | Per-extension file size limits for the file-size-check hook. |
@@ -70,10 +70,10 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 ## §T — Tasks
 
 | status | id | goal |
-|---|---|---|
+| --- | --- | --- |
 | `x` | T1 | Add `watch_file` entries to `.envrc` for `flake.nix`, `flake.lock`, `dev.sh`, and `lefthook-shfmt.sh` per direnv skill requirement. |
 | `x` | T9 | Add `markdownlint-cli` package to `ciCommon` in `flake.nix` so the tool is available in both devShells. §V.5, §B.3, linter skill step 1. |
-| `.` | T10 | Fix markdownlint violations in all tracked `.md` files using `.markdownlint.yml` config (MD013 already disabled). Linter skill step 5. |
+| `x` | T10 | Fix markdownlint violations in all tracked `.md` files using `.markdownlint.yml` config (MD013 already disabled). Linter skill step 5. |
 | `.` | T11 | Add `markdownlint` commands to `lefthook.yml` for `pre-commit` (`{staged_files}`) and `pre-push` (`{push_files}`) with `glob: "*.md"` and timeout. §V.6, §V.7, §B.3, linter skill steps 2–4. |
 | `~` | T2 | ~~Add markdownlint lefthook check~~ — split into T9, T10, T11. |
 | `.` | T3 | Standardize `actions/checkout` version — `update-pins.yml` uses `@v4` while `ci.yml` uses `@v6`. |

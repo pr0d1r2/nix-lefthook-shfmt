@@ -72,7 +72,7 @@ pre-commit:
       run: timeout ${LEFTHOOK_SHFMT_TIMEOUT:-30} shfmt -d -i 2 -ci {staged_files}
     markdownlint:
       glob: "*.md"
-      run: timeout ${LEFTHOOK_SHFMT_TIMEOUT:-30} markdownlint {staged_files}
+      run: timeout ${LEFTHOOK_MARKDOWNLINT_TIMEOUT:-30} markdownlint {staged_files}
 
 pre-push:
   parallel: true
@@ -82,4 +82,4 @@ pre-push:
       run: timeout ${LEFTHOOK_SHFMT_TIMEOUT:-30} shfmt -d -i 2 -ci {push_files}
     markdownlint:
       glob: "*.md"
-      run: timeout ${LEFTHOOK_SHFMT_TIMEOUT:-30} markdownlint {push_files}
+      run: timeout ${LEFTHOOK_MARKDOWNLINT_TIMEOUT:-30} markdownlint {push_files}

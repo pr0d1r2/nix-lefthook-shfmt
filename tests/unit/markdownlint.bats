@@ -38,6 +38,11 @@ setup() {
     assert_success
 }
 
+@test "lefthook pre-commit markdownlint uses LEFTHOOK_MARKDOWNLINT_TIMEOUT" {
+    run bash -c "sed -n '/^pre-commit:/,/^pre-push:/p' '$LEFTHOOK' | grep 'markdownlint' | grep -q 'LEFTHOOK_MARKDOWNLINT_TIMEOUT'"
+    assert_success
+}
+
 @test "lefthook pre-push has markdownlint command" {
     run bash -c "sed -n '/^pre-push:/,\$p' '$LEFTHOOK' | grep -q 'markdownlint:'"
     assert_success
@@ -55,5 +60,10 @@ setup() {
 
 @test "lefthook pre-push markdownlint has timeout" {
     run bash -c "sed -n '/^pre-push:/,\$p' '$LEFTHOOK' | grep 'markdownlint' | grep -q 'timeout'"
+    assert_success
+}
+
+@test "lefthook pre-push markdownlint uses LEFTHOOK_MARKDOWNLINT_TIMEOUT" {
+    run bash -c "sed -n '/^pre-push:/,\$p' '$LEFTHOOK' | grep 'markdownlint' | grep -q 'LEFTHOOK_MARKDOWNLINT_TIMEOUT'"
     assert_success
 }

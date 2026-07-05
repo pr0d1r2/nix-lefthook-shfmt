@@ -19,7 +19,7 @@ A Nix flake that packages a lefthook-compatible [shfmt](https://github.com/mvdan
 11. Shell scripts contain no function definitions — logic is split into separate scripts.
 12. Shell scripts are invoked with `bash script.sh`, never `./script.sh`.
 13. No embedded shell in Nix files — shell code lives in external `.sh` files read via `builtins.readFile`.
-14. The `nixpkgs-lock` flake input is auto-updated daily via the `update-pins.yml` workflow.
+14. ~~The `nixpkgs-lock` flake input is auto-updated daily via the `update-pins.yml` workflow.~~ Removed — pins are now updated manually; the cron workflow was dropped.
 
 ## §I — Interfaces
 
@@ -87,7 +87,7 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 
 1. **`.envrc` has no `watch_file` entries.** The file contains only `use flake`. Changes to `flake.nix`, `dev.sh`, or `lefthook-shfmt.sh` do not trigger direnv reload, so the dev shell can go stale after edits. The direnv skill requires watching flake modules and dependent files.
 
-2. **`actions/checkout` version mismatch across workflows.** `ci.yml` uses `actions/checkout@v6` while `update-pins.yml` uses `actions/checkout@v4`. Both should use the same version to avoid inconsistent CI behavior.
+2. **`actions/checkout` version mismatch across workflows.** `ci.yml` uses `actions/checkout@v6` while `update-pins.yml` uses `actions/checkout@v4`. Both should use the same version to avoid inconsistent CI behavior. *Resolved — `update-pins.yml` was removed.*
 
 3. **`.markdownlint.yml` config is unused by lefthook.** The config file exists and markdown files are tracked (`README.md`, `SPEC.md`, skill docs), but no markdownlint command is defined in `lefthook.yml`. This violates the linter skill rule that every tracked file type must have a lefthook linter.
 
@@ -96,3 +96,5 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 5. **`ci` devShell sets `BATS_LIB_PATH` differently from `default`.** The `ci` shell sets it as a Nix env attribute (`BATS_LIB_PATH = "..."`), while `default` sets it via `dev.sh` export with placeholder substitution. If the placeholder mechanism changes, the two shells could diverge.
 
 6. **`file-size-check` fails on `.md` files exceeding default limit.** `config/lefthook/file_size_limits.yml` had no `md` extension entry, so markdown files fell under the 4096-byte default. `SPEC.md` (6818 bytes) exceeded this, causing CI failure. Fixed by adding `md: 8192` extension limit.
+
+7. **`tests/unit/update-pins.bats` left behind after `update-pins.yml` removal.** The commit dropping the `update-pins.yml` cron workflow did not remove its corresponding bats test file, causing 7 CI failures. Fixed by removing `tests/unit/update-pins.bats`.

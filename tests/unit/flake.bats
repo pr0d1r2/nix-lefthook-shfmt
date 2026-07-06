@@ -11,3 +11,8 @@ setup() {
     run grep -q "pkgs.markdownlint-cli" "$FLAKE"
     assert_success
 }
+
+@test "lefthook-bats-unit uses wrap helper pattern" {
+    run grep -q 'wrap "lefthook-bats-unit"' "$FLAKE"
+    assert_success
+}

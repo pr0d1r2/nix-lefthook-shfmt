@@ -79,7 +79,7 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 | `x` | T3 | Standardize `actions/checkout` version — `update-pins.yml` uses `@v4` while `ci.yml` uses `@v6`. |
 | `x` | T4 | Add bats test for mixed `.sh` and non-`.sh` arguments passed together (currently only tested separately). |
 | `x` | T5 | Add bats test for `--format` on an already-formatted file (idempotency). |
-| `.` | T6 | Add bats test for `--check` and `--format` with multiple files in a single invocation. |
+| `x` | T6 | Add bats test for `--check` and `--format` with multiple files in a single invocation. |
 | `.` | T7 | Refactor `lefthook-bats-unit` in `flake.nix` to use the `wrap` helper pattern (currently manually defined unlike other wrappers). |
 | `.` | T8 | Add `nix/direnv.sh` file referenced by direnv skill but not yet present — centralizes watch-file logic. |
 

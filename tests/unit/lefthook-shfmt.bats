@@ -171,6 +171,61 @@ SH
     assert_success
 }
 
+@test "--check multiple well-formatted files passes" {
+    cat > "$TMP/a.sh" <<'SH'
+#!/usr/bin/env bash
+if true; then
+  echo "hello"
+fi
+SH
+    cat > "$TMP/b.sh" <<'SH'
+#!/usr/bin/env bash
+for i in 1 2 3; do
+  echo "$i"
+done
+SH
+    run shfmt_cmd --check "$TMP/a.sh" "$TMP/b.sh"
+    assert_success
+}
+
+@test "--check multiple files fails when one is badly formatted" {
+    cat > "$TMP/good.sh" <<'SH'
+#!/usr/bin/env bash
+if true; then
+  echo "hello"
+fi
+SH
+    cat > "$TMP/bad.sh" <<'SH'
+#!/usr/bin/env bash
+if true; then
+    echo "wrong indent"
+fi
+SH
+    run shfmt_cmd --check "$TMP/good.sh" "$TMP/bad.sh"
+    assert_failure
+}
+
+@test "--format multiple files reformats all in place" {
+    cat > "$TMP/messy1.sh" <<'SH'
+#!/usr/bin/env bash
+if true; then
+    echo "wrong indent"
+fi
+SH
+    cat > "$TMP/messy2.sh" <<'SH'
+#!/usr/bin/env bash
+for i in 1 2 3; do
+      echo "$i"
+done
+SH
+    run shfmt_cmd --format "$TMP/messy1.sh" "$TMP/messy2.sh"
+    assert_success
+    run shfmt_cmd --check "$TMP/messy1.sh"
+    assert_success
+    run shfmt_cmd --check "$TMP/messy2.sh"
+    assert_success
+}
+
 @test "falls back to 2-space when no .editorconfig governs" {
     cat > "$TMP/loose.sh" <<'SH'
 #!/usr/bin/env bash

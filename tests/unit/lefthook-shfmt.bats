@@ -153,6 +153,24 @@ SH
     assert_failure
 }
 
+@test "--format on already-formatted file is idempotent" {
+    cat > "$TMP/clean.sh" <<'SH'
+#!/usr/bin/env bash
+if true; then
+  echo "hello"
+fi
+SH
+    local before
+    before=$(cat "$TMP/clean.sh")
+    run shfmt_cmd --format "$TMP/clean.sh"
+    assert_success
+    local after
+    after=$(cat "$TMP/clean.sh")
+    [ "$before" = "$after" ]
+    run shfmt_cmd --check "$TMP/clean.sh"
+    assert_success
+}
+
 @test "falls back to 2-space when no .editorconfig governs" {
     cat > "$TMP/loose.sh" <<'SH'
 #!/usr/bin/env bash

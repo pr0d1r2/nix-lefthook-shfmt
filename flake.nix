@@ -106,14 +106,12 @@
             );
         in
         [
-          (pkgs.writeShellApplication {
-            name = "lefthook-bats-unit";
+          (wrap "lefthook-bats-unit" nix-lefthook-bats-unit-src {
             runtimeInputs = [
               pkgs.bats
               pkgs.coreutils
               pkgs.parallel
             ];
-            text = builtins.readFile "${nix-lefthook-bats-unit-src}/lefthook-bats-unit.sh";
           })
           (wrap "lefthook-deadnix" nix-lefthook-deadnix-src {
             runtimeInputs = [ pkgs.deadnix ];

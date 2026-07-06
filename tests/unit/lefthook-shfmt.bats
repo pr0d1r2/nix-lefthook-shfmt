@@ -128,6 +128,31 @@ SH
     assert_success
 }
 
+@test "mixed .sh and non-.sh args — well-formatted .sh passes" {
+    echo 'hello' > "$TMP/notes.txt"
+    echo '{}' > "$TMP/data.json"
+    cat > "$TMP/good.sh" <<'SH'
+#!/usr/bin/env bash
+if true; then
+  echo "hello"
+fi
+SH
+    run shfmt_cmd --check "$TMP/notes.txt" "$TMP/good.sh" "$TMP/data.json"
+    assert_success
+}
+
+@test "mixed .sh and non-.sh args — badly-formatted .sh fails" {
+    echo 'hello' > "$TMP/readme.md"
+    cat > "$TMP/bad.sh" <<'SH'
+#!/usr/bin/env bash
+if true; then
+    echo "wrong indent"
+fi
+SH
+    run shfmt_cmd --check "$TMP/readme.md" "$TMP/bad.sh"
+    assert_failure
+}
+
 @test "falls back to 2-space when no .editorconfig governs" {
     cat > "$TMP/loose.sh" <<'SH'
 #!/usr/bin/env bash

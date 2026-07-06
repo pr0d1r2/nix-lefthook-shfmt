@@ -12,22 +12,12 @@ setup() {
     assert_success
 }
 
-@test ".envrc watches flake.nix" {
-    run grep -q "watch_file flake.nix" "$ENVRC"
+@test ".envrc watches nix/direnv.sh" {
+    run grep -q "watch_file nix/direnv.sh" "$ENVRC"
     assert_success
 }
 
-@test ".envrc watches flake.lock" {
-    run grep -q "watch_file flake.lock" "$ENVRC"
-    assert_success
-}
-
-@test ".envrc watches dev.sh" {
-    run grep -q "watch_file dev.sh" "$ENVRC"
-    assert_success
-}
-
-@test ".envrc watches lefthook-shfmt.sh" {
-    run grep -q "watch_file lefthook-shfmt.sh" "$ENVRC"
+@test ".envrc sources nix/direnv.sh" {
+    run grep -q "\. nix/direnv.sh" "$ENVRC"
     assert_success
 }

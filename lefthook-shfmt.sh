@@ -33,24 +33,29 @@ fi
 
 # shfmt only reads .editorconfig when no formatting flag is passed, so
 # forcing -i/-ci would silently override a consumer's own indent rules.
-# Walk up from the first file to detect a governing .editorconfig.
-probe=$(dirname -- "${files[0]}")
-case "$probe" in
-  /*) : ;;
-  *) probe="$PWD/$probe" ;;
-esac
-governed=0
-while :; do
-  if [ -f "$probe/.editorconfig" ]; then
-    governed=1
-    break
-  fi
-  [ "$probe" = "/" ] && break
-  probe=$(dirname -- "$probe")
-done
+# Check each file independently: lefthook may pass files from separate
+# worktrees or nested projects with different EditorConfig rules.
+status=0
+for f in "${files[@]}"; do
+  probe=$(dirname -- "$f")
+  case "$probe" in
+    /*) : ;;
+    *) probe="$PWD/$probe" ;;
+  esac
+  governed=0
+  while :; do
+    if [ -f "$probe/.editorconfig" ]; then
+      governed=1
+      break
+    fi
+    [ "$probe" = "/" ] && break
+    probe=$(dirname -- "$probe")
+  done
 
-if [ "$governed" -eq 1 ]; then
-  exec shfmt "$mode" "${files[@]}"
-else
-  exec shfmt "$mode" -i 2 -ci "${files[@]}"
-fi
+  if [ "$governed" -eq 1 ]; then
+    shfmt "$mode" "$f" || status=$?
+  else
+    shfmt "$mode" -i 2 -ci "$f" || status=$?
+  fi
+done
+exit "$status"

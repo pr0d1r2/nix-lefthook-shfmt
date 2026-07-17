@@ -236,3 +236,28 @@ SH
     run shfmt_cmd --check "$TMP/loose.sh"
     assert_success
 }
+
+@test "multiple files use their own EditorConfig or fallback" {
+    mkdir -p "$TMP/proj4" "$TMP/loose"
+    cat > "$TMP/proj4/.editorconfig" <<'EC'
+root = true
+[*]
+indent_style = space
+indent_size = 4
+EC
+    cat > "$TMP/proj4/four.sh" <<'SH'
+if true; then
+    echo "four spaces"
+fi
+SH
+    cat > "$TMP/loose/two.sh" <<'SH'
+if true; then
+  echo "two spaces"
+fi
+SH
+
+    run shfmt_cmd --check "$TMP/proj4/four.sh" "$TMP/loose/two.sh"
+    assert_success
+    run shfmt_cmd --check "$TMP/loose/two.sh" "$TMP/proj4/four.sh"
+    assert_success
+}

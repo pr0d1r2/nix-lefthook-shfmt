@@ -21,21 +21,10 @@
       set-and-setting,
       ...
     }:
-    let
-      supportedSystems = [
-        "aarch64-darwin"
-        "x86_64-darwin"
-        "x86_64-linux"
-        "aarch64-linux"
-      ];
-      forAllSystems =
-        f: nixpkgs.lib.genAttrs supportedSystems (system: f nixpkgs.legacyPackages.${system});
-    in
     set-and-setting.lib.mkConsumerFlake {
       inherit self nixpkgs set-and-setting;
       fragments = [
         "base"
-        "actions"
         "nix"
         "shell"
         "ascii"
@@ -47,6 +36,22 @@
           name = "lefthook-shfmt";
           runtimeInputs = [ pkgs.shfmt ];
           text = builtins.readFile ./lefthook-shfmt.sh;
+        };
+      };
+      extraChecks = pkgs: {
+        actionlint = set-and-setting.lib.mkLefthookCheck {
+          inherit pkgs;
+          wrapper = pkgs.writeShellApplication {
+            name = "actionlint-check";
+            runtimeInputs = [ pkgs.actionlint ];
+            text = ''
+              actionlint "$@"
+            '';
+          };
+          src = pkgs.lib.sources.sourceByRegex ./. [ "^.github/workflows/.*" ];
+          name = "actionlint";
+          suffices = [ ".yml" ".yaml" ];
+          checkFlag = "";
         };
       };
       src = ./.;

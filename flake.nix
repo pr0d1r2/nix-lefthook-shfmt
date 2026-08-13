@@ -29,16 +29,12 @@
       # generated check with the same check using the current API.
       lib = set-and-setting.lib // {
         checksFor = args:
-          let
-            checks = set-and-setting.lib.checksFor (args // {
-              fragments = builtins.filter (fragment: fragment != "actions") args.fragments;
-            });
-            src = nixpkgs.lib.sources.sourceByRegex args.src [ "^\\.github/workflows/.*" ];
-          in
-          checks
+          set-and-setting.lib.checksFor (args // {
+            fragments = builtins.filter (fragment: fragment != "actions") args.fragments;
+          })
           // {
             actionlint = args.pkgs.runCommand "actionlint-check" { } ''
-              cd ${src}
+              cd ${nixpkgs.lib.sources.sourceByRegex args.src [ "^\\.github/workflows/.*" ]}
               mapfile -t files < <(find . -type f \( -name '*.yml' -o -name '*.yaml' \) | sort)
               if [ ''${#files[@]} -gt 0 ]; then
                 ${args.pkgs.actionlint}/bin/actionlint "''${files[@]}"

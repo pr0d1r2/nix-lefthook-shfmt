@@ -112,3 +112,5 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 13. **The pinned actionlint helper passed a scalar workflow-path regex to Nixpkgs’ `sourceByRegex`, whose current API requires a list.** Fixed by retaining the actionlint check with consumer-local list-shaped source filtering while excluding the incompatible fragment implementation.
 
 14. **The pinned set-and-setting actionlint helper passes a scalar workflow-path regex to Nixpkgs’ `sourceByRegex`, so enabling the canonical `actions` fragment makes flake evaluation fail.** Fixed by retaining the fragment for hook generation and supplying an equivalent actionlint check with the current list-shaped API.
+
+15. **The consumer flake’s actionlint compatibility override used a `let` expression in the outputs body, which violated the flake-manifest guardrail.** Fixed by inlining the filtered workflow source expression while retaining the list-shaped `sourceByRegex` call.

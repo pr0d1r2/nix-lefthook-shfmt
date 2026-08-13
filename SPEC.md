@@ -114,3 +114,5 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 14. **The pinned set-and-setting actionlint helper passes a scalar workflow-path regex to Nixpkgs’ `sourceByRegex`, so enabling the canonical `actions` fragment makes flake evaluation fail.** Fixed by retaining the fragment for hook generation and supplying an equivalent actionlint check with the current list-shaped API.
 
 15. **The consumer flake’s actionlint compatibility override used a `let` expression in the outputs body, which violated the flake-manifest guardrail.** Fixed by inlining the filtered workflow source expression while retaining the list-shaped `sourceByRegex` call.
+
+16. **The direct `set-and-setting` input did not follow the consumer’s `nixpkgs` input, so lock resolution retained stale nested `nixpkgs-lock` inputs and produced five `nixpkgs` lock nodes.** Fixed by making `set-and-setting.inputs.nixpkgs` follow the root `nixpkgs` and regenerating `flake.lock`.

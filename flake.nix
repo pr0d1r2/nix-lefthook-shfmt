@@ -25,7 +25,6 @@
       inherit self nixpkgs set-and-setting;
       fragments = [
         "base"
-        "actions"
         "nix"
         "shell"
         "ascii"
@@ -38,6 +37,20 @@
           runtimeInputs = [ pkgs.shfmt ];
           text = builtins.readFile ./lefthook-shfmt.sh;
         };
+      };
+      extraChecks = pkgs: {
+        actionlint =
+          let
+            src = pkgs.lib.sources.sourceByRegex ./. [ "^\\.github/workflows/.*" ];
+          in
+          pkgs.runCommand "actionlint-check" { } ''
+            cd ${src}
+            mapfile -t files < <(find . -type f \( -name '*.yml' -o -name '*.yaml' \) | sort)
+            if [ ''${#files[@]} -gt 0 ]; then
+              ${pkgs.actionlint}/bin/actionlint "''${files[@]}"
+            fi
+            touch $out
+          '';
       };
       src = ./.;
     };

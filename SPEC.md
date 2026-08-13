@@ -108,3 +108,5 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 11. **The linter-coverage check expected `config/linter-coverage-exemptions.yml`, but the generated setting file was not present in the source tree used by the guardrail.** Fixed by adding the repository’s explicit empty exemption configuration.
 
 12. **The consumer flake omitted the canonical `actions` fragment and replaced it with a local actionlint check, so generated `lefthook.yml` differed from the expected fragment composition.** Fixed by restoring the `actions` fragment and its standard checks.
+
+13. **The pinned actionlint helper passed a scalar workflow-path regex to Nixpkgs’ `sourceByRegex`, whose current API requires a list.** Fixed by retaining the actionlint check with consumer-local list-shaped source filtering while excluding the incompatible fragment implementation.

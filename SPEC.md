@@ -116,3 +116,7 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 15. **The consumer flake’s actionlint compatibility override used a `let` expression in the outputs body, which violated the flake-manifest guardrail.** Fixed by inlining the filtered workflow source expression while retaining the list-shaped `sourceByRegex` call.
 
 16. **The direct `set-and-setting` input did not follow the consumer’s `nixpkgs` input, so lock resolution retained stale nested `nixpkgs-lock` inputs and produced five `nixpkgs` lock nodes.** Fixed by making `set-and-setting.inputs.nixpkgs` follow the root `nixpkgs` and regenerating `flake.lock`.
+
+17. **The actionlint compatibility override embedded a shell heredoc in `flake.nix`, which violated the `nix-no-embedded-shell` guardrail.** Fixed by moving the check script to `nix/actionlint-check.sh` and reading it into the derivation.
+
+18. **The flake input declarations used repeated dotted assignments for `set-and-setting`, which the statix guardrail rejects as repeated attribute keys.** Fixed by grouping the input URL and follows declarations in one attribute set.

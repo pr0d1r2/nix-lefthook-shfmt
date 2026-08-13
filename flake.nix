@@ -10,9 +10,11 @@
     nixpkgs-lock.url = "github:pr0d1r2/nixpkgs-lock";
     nixpkgs.follows = "nixpkgs-lock/nixpkgs";
 
-    set-and-setting.url = "github:pr0d1r2/set-and-setting";
-    set-and-setting.inputs.nixpkgs-lock.follows = "nixpkgs-lock";
-    set-and-setting.inputs.nixpkgs.follows = "nixpkgs";
+    set-and-setting = {
+      url = "github:pr0d1r2/set-and-setting";
+      inputs.nixpkgs-lock.follows = "nixpkgs-lock";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -29,19 +31,24 @@
       # (it is part of the canonical hook) and replace only that broken
       # generated check with the same check using the current API.
       lib = set-and-setting.lib // {
-        checksFor = args:
-          set-and-setting.lib.checksFor (args // {
-            fragments = builtins.filter (fragment: fragment != "actions") args.fragments;
-          })
+        checksFor =
+          args:
+          set-and-setting.lib.checksFor (
+            args
+            // {
+              fragments = builtins.filter (fragment: fragment != "actions") args.fragments;
+            }
+          )
           // {
-            actionlint = args.pkgs.runCommand "actionlint-check" { } ''
-              cd ${nixpkgs.lib.sources.sourceByRegex args.src [ "^\\.github/workflows/.*" ]}
-              mapfile -t files < <(find . -type f \( -name '*.yml' -o -name '*.yaml' \) | sort)
-              if [ ''${#files[@]} -gt 0 ]; then
-                ${args.pkgs.actionlint}/bin/actionlint "''${files[@]}"
-              fi
-              touch $out
-            '';
+            actionlint = args.pkgs.runCommand "actionlint-check" { } (
+              builtins.replaceStrings
+                [ "@SRC@" "@ACTIONLINT@" ]
+                [
+                  (toString (nixpkgs.lib.sources.sourceByRegex args.src [ "^\\.github/workflows/.*" ]))
+                  "${args.pkgs.actionlint}"
+                ]
+                (builtins.readFile ./nix/actionlint-check.sh)
+            );
           };
       };
       fragments = [

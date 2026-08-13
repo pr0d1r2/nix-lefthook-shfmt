@@ -110,3 +110,5 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 12. **The consumer flake omitted the canonical `actions` fragment and replaced it with a local actionlint check, so generated `lefthook.yml` differed from the expected fragment composition.** Fixed by restoring the `actions` fragment and its standard checks.
 
 13. **The pinned actionlint helper passed a scalar workflow-path regex to Nixpkgs’ `sourceByRegex`, whose current API requires a list.** Fixed by retaining the actionlint check with consumer-local list-shaped source filtering while excluding the incompatible fragment implementation.
+
+14. **The pinned set-and-setting actionlint helper passes a scalar workflow-path regex to Nixpkgs’ `sourceByRegex`, so enabling the canonical `actions` fragment makes flake evaluation fail.** Fixed by retaining the fragment for hook generation and supplying an equivalent actionlint check with the current list-shaped API.

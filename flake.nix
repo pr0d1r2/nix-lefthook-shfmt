@@ -23,8 +23,33 @@
     }:
     set-and-setting.lib.mkConsumerFlake {
       inherit self nixpkgs set-and-setting;
+      # The pinned set-and-setting actionlint helper still passes a scalar
+      # regex to sourceByRegex. Keep the actions fragment in materialization
+      # (it is part of the canonical hook) and replace only that broken
+      # generated check with the same check using the current API.
+      lib = set-and-setting.lib // {
+        checksFor = args:
+          let
+            checks = set-and-setting.lib.checksFor (args // {
+              fragments = builtins.filter (fragment: fragment != "actions") args.fragments;
+            });
+            src = nixpkgs.lib.sources.sourceByRegex args.src [ "^\\.github/workflows/.*" ];
+          in
+          checks
+          // {
+            actionlint = args.pkgs.runCommand "actionlint-check" { } ''
+              cd ${src}
+              mapfile -t files < <(find . -type f \( -name '*.yml' -o -name '*.yaml' \) | sort)
+              if [ ''${#files[@]} -gt 0 ]; then
+                ${args.pkgs.actionlint}/bin/actionlint "''${files[@]}"
+              fi
+              touch $out
+            '';
+          };
+      };
       fragments = [
         "base"
+        "actions"
         "nix"
         "shell"
         "ascii"
@@ -37,20 +62,6 @@
           runtimeInputs = [ pkgs.shfmt ];
           text = builtins.readFile ./lefthook-shfmt.sh;
         };
-      };
-      extraChecks = pkgs: {
-        actionlint =
-          let
-            src = pkgs.lib.sources.sourceByRegex ./. [ "^\\.github/workflows/.*" ];
-          in
-          pkgs.runCommand "actionlint-check" { } ''
-            cd ${src}
-            mapfile -t files < <(find . -type f \( -name '*.yml' -o -name '*.yaml' \) | sort)
-            if [ ''${#files[@]} -gt 0 ]; then
-              ${pkgs.actionlint}/bin/actionlint "''${files[@]}"
-            fi
-            touch $out
-          '';
       };
       src = ./.;
     };

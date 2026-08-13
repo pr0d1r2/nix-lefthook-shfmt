@@ -119,4 +119,8 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 
 17. **The actionlint compatibility override embedded a shell heredoc in `flake.nix`, which violated the `nix-no-embedded-shell` guardrail.** Fixed by moving the check script to `nix/actionlint-check.sh` and reading it into the derivation.
 
+18. **The markdown file-size limit was too small for the growing bug history.** `SPEC.md` reached 11,203 bytes and exceeded the 8,192-byte `.md` limit, causing the guardrails file-size check to fail. Fixed by increasing the explicit markdown limit to 16,384 bytes.
+
+19. **The local actionlint check used Nix’s `out` builder variable without a ShellCheck annotation.** ShellCheck reported SC2154 even though `out` is injected by `runCommand`. Fixed by documenting that intentional builder-provided variable at its use site.
+
 18. **The flake input declarations used repeated dotted assignments for `set-and-setting`, which the statix guardrail rejects as repeated attribute keys.** Fixed by grouping the input URL and follows declarations in one attribute set.

@@ -106,3 +106,5 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 10. **The upstream actionlint check passed a workflow path regex as a string to Nixpkgs’ `sourceByRegex`, which now requires a list and caused flake evaluation to fail.** Fixed by keeping the actions fragment out of the standard check assembly and defining an equivalent local actionlint check with the correct file filtering.
 
 11. **The linter-coverage check expected `config/linter-coverage-exemptions.yml`, but the generated setting file was not present in the source tree used by the guardrail.** Fixed by adding the repository’s explicit empty exemption configuration.
+
+12. **The consumer flake omitted the canonical `actions` fragment and replaced it with a local actionlint check, so generated `lefthook.yml` differed from the expected fragment composition.** Fixed by restoring the `actions` fragment and its standard checks.

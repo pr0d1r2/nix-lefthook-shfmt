@@ -128,3 +128,5 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 21. **The local actionlint override passed `lib` to `mkConsumerFlake`, which the current standard no longer accepts, so every `set-and-setting` bump failed evaluation and pin refreshes kept the old standard.** The old standard's `lefthook-bats-unit` ran `bats --jobs $(nproc)`, which hung CI for six hours. Fixed by dropping the override (upstream actionlint is fixed) and bumping the standard.
 
 22. **`.editorconfig` lacked `[*.sh] switch_case_indent = true`, so the standard's EditorConfig-aware shfmt check rejected indented `case` arms.** Fixed by adding the section.
+
+23. **`tests/unit/dev.bats` reassigned `TMPDIR` and removed it in teardown, breaking the shared bats run directory when files ran together; `flake.bats` and `markdownlint.bats` asserted vendored-era generated content.** Fixed by using a private `TEST_TEMP` and deleting the stale specs.

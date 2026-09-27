@@ -26,31 +26,6 @@
     }:
     set-and-setting.lib.mkConsumerFlake {
       inherit self nixpkgs set-and-setting;
-      # The pinned set-and-setting actionlint helper still passes a scalar
-      # regex to sourceByRegex. Keep the actions fragment in materialization
-      # (it is part of the canonical hook) and replace only that broken
-      # generated check with the same check using the current API.
-      lib = set-and-setting.lib // {
-        checksFor =
-          args:
-          set-and-setting.lib.checksFor (
-            args
-            // {
-              fragments = builtins.filter (fragment: fragment != "actions") args.fragments;
-            }
-          )
-          // {
-            actionlint = args.pkgs.runCommand "actionlint-check" { } (
-              builtins.replaceStrings
-                [ "@SRC@" "@ACTIONLINT@" ]
-                [
-                  (toString (nixpkgs.lib.sources.sourceByRegex args.src [ "^\\.github/workflows/.*" ]))
-                  "${args.pkgs.actionlint}"
-                ]
-                (builtins.readFile ./nix/actionlint-check.sh)
-            );
-          };
-      };
       fragments = [
         "base"
         "actions"

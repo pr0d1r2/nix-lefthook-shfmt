@@ -123,4 +123,12 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 
 19. **The local actionlint check used Nix’s `out` builder variable without a ShellCheck annotation.** ShellCheck reported SC2154 even though `out` is injected by `runCommand`. Fixed by documenting that intentional builder-provided variable at its use site.
 
-18. **The flake input declarations used repeated dotted assignments for `set-and-setting`, which the statix guardrail rejects as repeated attribute keys.** Fixed by grouping the input URL and follows declarations in one attribute set.
+20. **The flake input declarations used repeated dotted assignments for `set-and-setting`, which the statix guardrail rejects as repeated attribute keys.** Fixed by grouping the input URL and follows declarations in one attribute set.
+
+21. **The local actionlint override passed `lib` to `mkConsumerFlake`, which the current standard no longer accepts, so every `set-and-setting` bump failed evaluation and pin refreshes kept the old standard.** The old standard's `lefthook-bats-unit` ran `bats --jobs $(nproc)`, which hung CI for six hours. Fixed by dropping the override (upstream actionlint is fixed) and bumping the standard.
+
+22. **`.editorconfig` lacked `[*.sh] switch_case_indent = true`, so the standard's EditorConfig-aware shfmt check rejected indented `case` arms.** Fixed by adding the section.
+
+23. **`tests/unit/dev.bats` reassigned `TMPDIR` and removed it in teardown, breaking the shared bats run directory when files ran together; `flake.bats` and `markdownlint.bats` asserted vendored-era generated content.** Fixed by using a private `TEST_TEMP` and deleting the stale specs.
+
+24. **`agent/set/skills/linter.md` had no extension table, so the current standard's pre-push `linter-coverage` check rejected all 10 tracked extensions.** Fixed by adding the table (same rows as nix-lefthook-deadnix).

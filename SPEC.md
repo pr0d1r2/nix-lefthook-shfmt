@@ -130,3 +130,5 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 22. **`.editorconfig` lacked `[*.sh] switch_case_indent = true`, so the standard's EditorConfig-aware shfmt check rejected indented `case` arms.** Fixed by adding the section.
 
 23. **`tests/unit/dev.bats` reassigned `TMPDIR` and removed it in teardown, breaking the shared bats run directory when files ran together; `flake.bats` and `markdownlint.bats` asserted vendored-era generated content.** Fixed by using a private `TEST_TEMP` and deleting the stale specs.
+
+24. **`agent/set/skills/linter.md` had no extension table, so the current standard's pre-push `linter-coverage` check rejected all 10 tracked extensions.** Fixed by adding the table (same rows as nix-lefthook-deadnix).

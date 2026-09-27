@@ -1,15 +1,23 @@
 #!/usr/bin/env bats
 
+# Run THIS repository's package: its runtimeInputs carry shfmt, which the
+# standard's dev shell does not put on PATH (CI failed with
+# `shfmt: command not found`, while failure-expecting cases passed
+# vacuously).
+setup_file() {
+    SHFMT_PKG="$(nix build "$BATS_TEST_DIRNAME/../..#default" --no-link --print-out-paths)"
+    export SHFMT_PKG
+}
+
 setup() {
     load "${BATS_LIB_PATH}/bats-support/load.bash"
     load "${BATS_LIB_PATH}/bats-assert/load.bash"
 
     TMP="$BATS_TEST_TMPDIR"
-    SCRIPT="$BATS_TEST_DIRNAME/../../lefthook-shfmt.sh"
 }
 
 shfmt_cmd() {
-    bash "$SCRIPT" "$@"
+    "$SHFMT_PKG/bin/lefthook-shfmt" "$@"
 }
 
 @test "no args exits 0" {

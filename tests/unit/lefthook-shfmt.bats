@@ -136,6 +136,26 @@ SH
     assert_success
 }
 
+@test "honors .editorconfig switch_case_indent=true" {
+    mkdir -p "$TMP/proj-case"
+    cat > "$TMP/proj-case/.editorconfig" <<'EC'
+root = true
+[*]
+indent_style = space
+indent_size = 4
+switch_case_indent = true
+EC
+    cat > "$TMP/proj-case/x.sh" <<'SH'
+case "$1" in
+    value)
+        echo "indented case"
+        ;;
+esac
+SH
+    run shfmt_cmd --check "$TMP/proj-case/x.sh"
+    assert_success
+}
+
 @test "mixed .sh and non-.sh args — well-formatted .sh passes" {
     echo 'hello' > "$TMP/notes.txt"
     echo '{}' > "$TMP/data.json"

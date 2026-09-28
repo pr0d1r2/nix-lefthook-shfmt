@@ -52,24 +52,24 @@ Those entries are worth more than a green badge. A gate is a claim about what
 it catches, and the only honest way to describe one is alongside what it
 missed.
 
-## The guardrails are this repository's own
+## The guardrails are the checks wired into CI
 
-This repository is gated by `lefthook.yml`. Before a machine-authored branch is
-pushed, it is run against that gate — the same checks a human gets on
-`git commit`, in the same environment continuous integration uses. A change the
-gate refuses is not pushed and no pull request is opened for it.
+This repository's CI is wired through the reusable workflow referenced by
+`.github/workflows/ci.yml`. The repository also publishes
+`lefthook-remote.yml` for consumers, but it does not contain a local
+`lefthook.yml` to run directly. Check the workflow and its referenced
+guardrails when assessing what a green build means.
 
-Run it yourself:
+For the repository's exported hook configuration, run it in a consumer
+repository with:
 
 ```sh
-lefthook run pre-commit --all-files
+lefthook run pre-commit --all-files --config lefthook-remote.yml
 ```
 
-That property is recent rather than original, which is the honest way to put
-it: the loop's agent worked for a long time in a sandbox where these hooks were
-never installed, so continuous integration was the first thing to see a change,
-and defects a local hook names in a fraction of a second cost a push and a full
-CI round each.
+The checks wired into CI are the authoritative gate for this repository; the
+exported hook configuration is a consumer-facing interface and is not, by
+itself, evidence that every repository change passed those checks.
 
 ## What a reader should actually check
 

@@ -75,7 +75,7 @@ Consumed by other repos via lefthook `remotes:` directive. Adds `shfmt` commands
 | `x` | T9 | Add `markdownlint-cli` package to `ciCommon` in `flake.nix` so the tool is available in both devShells. §V.5, §B.3, linter skill step 1. |
 | `x` | T10 | Fix markdownlint violations in all tracked `.md` files using `.markdownlint.yml` config (MD013 already disabled). Linter skill step 5. |
 | `x` | T11 | Add `markdownlint` commands to `lefthook.yml` for `pre-commit` (`{staged_files}`) and `pre-push` (`{push_files}`) with `glob: "*.md"` and timeout. §V.6, §V.7, §B.3, linter skill steps 2–4. |
-| `~` | T2 | ~~Add markdownlint lefthook check~~ — split into T9, T10, T11. |
+| `x` | T2 | ~~Add markdownlint lefthook check~~ — split into T9, T10, T11. |
 | `x` | T3 | Standardize `actions/checkout` version — `update-pins.yml` uses `@v4` while `ci.yml` uses `@v6`. |
 | `x` | T4 | Add bats test for mixed `.sh` and non-`.sh` arguments passed together (currently only tested separately). |
 | `x` | T5 | Add bats test for `--format` on an already-formatted file (idempotency). |

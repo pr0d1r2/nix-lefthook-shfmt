@@ -95,6 +95,11 @@ EC
 if true; then
     echo "four spaces"
 fi
+case "$1" in
+value)
+    echo "case bodies follow shfmt's default"
+    ;;
+esac
 SH
     run shfmt_cmd --check "$TMP/proj4/x.sh"
     assert_success

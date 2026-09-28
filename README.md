@@ -38,6 +38,10 @@ When no `.editorconfig` is found, the wrapper falls back to `-i 2 -ci`
 > 2-space default keep it via the fallback; repos with an `.editorconfig`
 > now get the indent they declared.
 
+If you relied on the old forced `-ci` behavior, add
+`switch_case_indent = true` to the relevant `.editorconfig` section. An
+`indent_size` setting alone does not enable indented case bodies in shfmt.
+
 ## Usage
 
 ### Option A: Lefthook remote (recommended)

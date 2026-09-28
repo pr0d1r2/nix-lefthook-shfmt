@@ -95,6 +95,11 @@ EC
 if true; then
     echo "four spaces"
 fi
+case "$1" in
+value)
+    echo "case bodies follow shfmt's default"
+    ;;
+esac
 SH
     run shfmt_cmd --check "$TMP/proj4/x.sh"
     assert_success
@@ -133,6 +138,26 @@ if true; then
 fi
 SH
     run shfmt_cmd --check "$TMP/proj2/x.sh"
+    assert_success
+}
+
+@test "honors .editorconfig switch_case_indent=true" {
+    mkdir -p "$TMP/proj-case"
+    cat > "$TMP/proj-case/.editorconfig" <<'EC'
+root = true
+[*]
+indent_style = space
+indent_size = 4
+switch_case_indent = true
+EC
+    cat > "$TMP/proj-case/x.sh" <<'SH'
+case "$1" in
+    value)
+        echo "indented case"
+        ;;
+esac
+SH
+    run shfmt_cmd --check "$TMP/proj-case/x.sh"
     assert_success
 }
 
@@ -242,6 +267,18 @@ if true; then
 fi
 SH
     run shfmt_cmd --check "$TMP/loose.sh"
+    assert_success
+}
+
+@test "falls back to indented case bodies when no .editorconfig governs" {
+    cat > "$TMP/default-case.sh" <<'SH'
+case "$1" in
+  value)
+    echo "indented case"
+    ;;
+esac
+SH
+    run shfmt_cmd --check "$TMP/default-case.sh"
     assert_success
 }
 

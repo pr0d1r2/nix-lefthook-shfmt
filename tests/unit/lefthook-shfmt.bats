@@ -270,6 +270,18 @@ SH
     assert_success
 }
 
+@test "falls back to indented case bodies when no .editorconfig governs" {
+    cat > "$TMP/default-case.sh" <<'SH'
+case "$1" in
+  value)
+    echo "indented case"
+    ;;
+esac
+SH
+    run shfmt_cmd --check "$TMP/default-case.sh"
+    assert_success
+}
+
 @test "multiple files use their own EditorConfig or fallback" {
     mkdir -p "$TMP/proj4" "$TMP/loose"
     cat > "$TMP/proj4/.editorconfig" <<'EC'

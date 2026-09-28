@@ -2,12 +2,12 @@
 
 ## §D — Description
 
-A Nix flake that packages a lefthook-compatible [shfmt](https://github.com/mvdan/sh) wrapper for enforcing shell script formatting in git hooks. The wrapper filters `.sh` files from its arguments, skips non-shell and missing files gracefully, and runs `shfmt` with standardized flags (`-i 2 -ci`). It supports both diff-check and in-place format modes. Consumers can integrate it as a lefthook remote (pulling `lefthook-remote.yml` directly) or as a flake input added to their devShell. The project targets Nix-based development environments on Linux and macOS (amd64 and arm64) and is designed for teams enforcing consistent shell formatting via pre-commit and pre-push hooks.
+A Nix flake that packages a lefthook-compatible [shfmt](https://github.com/mvdan/sh) wrapper for enforcing shell script formatting in git hooks. The wrapper filters `.sh` files from its arguments, skips non-shell and missing files gracefully, and uses the governing `.editorconfig` when present; otherwise it falls back to `shfmt -i 2 -ci`. It supports both diff-check and in-place format modes. Consumers can integrate it as a lefthook remote (pulling `lefthook-remote.yml` directly) or as a flake input added to their devShell. The project targets Nix-based development environments on Linux and macOS (amd64 and arm64) and is designed for teams enforcing consistent shell formatting via pre-commit and pre-push hooks.
 
 ## §V — Invariants
 
 1. `lefthook-shfmt.sh` must exit 0 when given zero arguments or only non-`.sh` / non-existent files.
-2. `lefthook-shfmt.sh --check` must fail on files not matching `shfmt -i 2 -ci` and succeed on conforming files.
+2. `lefthook-shfmt.sh --check` must fail on files not matching their governing `.editorconfig`, or the fallback `shfmt -i 2 -ci` when no `.editorconfig` governs, and succeed on conforming files.
 3. `lefthook-shfmt.sh --format` must rewrite files in place so they pass a subsequent `--check`.
 4. Default mode (no flag) is diff/check (`-d`), not write.
 5. The flake must evaluate and build on all four supported systems: `aarch64-darwin`, `x86_64-darwin`, `x86_64-linux`, `aarch64-linux`.

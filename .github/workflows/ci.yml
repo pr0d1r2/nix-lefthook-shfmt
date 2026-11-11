@@ -6,7 +6,8 @@ name: CI
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   guardrails:
-    uses: pr0d1r2/set-and-setting/.github/workflows/guardrails.yml@main
+    uses: pr0d1r2/set-and-setting/.github/workflows/guardrails.yml@68a54eb684546faa8d1faff50a607153a58cf151
